@@ -1,0 +1,59 @@
+{
+    "posts" : {
+        "works" : {
+            "id" : 1,
+            "name": "works",
+            "module" : "posts",
+            "title": "works",
+            "description": "회사소개 문구가 들어갈 예정입니다.",
+            "grants" : {
+                "list" : [0],
+                "write" : [4],
+                "delete" : [4],
+                "view" : [1,2,3,4]
+            },
+            "category" : [
+                {
+                    "name": "fe",
+                    "title" : "Frontend",
+                    "value" : "a"
+                },
+                {
+                    "name": "be",
+                    "title" : "Backend",
+                    "value" : "b"
+                },
+                {
+                    "name": "db",
+                    "title" : "Database",
+                    "value" : "c"
+                }
+            ]
+        },
+        "notice" : {
+            "id" : 2,
+            "name": "notice",
+            "module" : "posts",
+            "title": "notice",
+            "description": "",
+            "grants" : {
+                "list" : [0],
+                "write" : [4],
+                "delete" : [4],
+                "view" : [0]
+            },
+            "category" : [
+                {
+                    "name": "notice",
+                    "title" : "Notice",
+                    "value" : "a"
+                },
+                {
+                    "name": "update",
+                    "title" : "Update",
+                    "value" : "b"
+                }
+            ]
+        }
+    }
+}

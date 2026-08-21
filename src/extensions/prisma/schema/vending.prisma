@@ -1,0 +1,75 @@
+model VendingMachine {
+  id             Int             @id @default(autoincrement())
+  slug           String          @unique @db.VarChar(80)
+  name           String          @db.VarChar(120)
+  description    String?
+  supplyUnitCost Int             @default(0)
+  isActive       Boolean         @default(true)
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+  periods        VendingPeriod[]
+}
+
+model VendingPeriod {
+  id             Int                @id @default(autoincrement())
+  machineId      Int
+  period         DateTime           @db.Date
+  status         String             @default("draft") @db.VarChar(20)
+  note           String?
+  reportSnapshot Json?
+  createdAt      DateTime           @default(now())
+  updatedAt      DateTime           @updatedAt
+  machine        VendingMachine     @relation(fields: [machineId], references: [id], onDelete: Cascade)
+  sales          VendingSale[]
+  purchases      VendingPurchase[]
+  inventories    VendingInventory[]
+
+  @@unique([machineId, period])
+}
+
+model VendingSale {
+  id              Int           @id @default(autoincrement())
+  periodId        Int
+  soldAt          DateTime      @db.Date
+  approvedCount   Int           @default(0)
+  approvedAmount  Int           @default(0)
+  cancelledCount  Int           @default(0)
+  cancelledAmount Int           @default(0)
+  netCount        Int           @default(0)
+  netAmount       Int           @default(0)
+  note            String?
+  createdAt       DateTime      @default(now())
+  period          VendingPeriod @relation(fields: [periodId], references: [id], onDelete: Cascade)
+
+  @@unique([periodId, soldAt])
+}
+
+model VendingPurchase {
+  id          Int           @id @default(autoincrement())
+  periodId    Int
+  purchasedAt DateTime      @db.Date
+  category    String        @db.VarChar(20)
+  productName String        @db.VarChar(160)
+  quantity    Int           @default(0)
+  amount      Int           @default(0)
+  note        String?
+  createdAt   DateTime      @default(now())
+  period      VendingPeriod @relation(fields: [periodId], references: [id], onDelete: Cascade)
+
+  @@index([periodId])
+}
+
+model VendingInventory {
+  id              Int           @id @default(autoincrement())
+  periodId        Int
+  productName     String        @db.VarChar(160)
+  category        String        @default("product") @db.VarChar(20)
+  closingQuantity Int           @default(0)
+  unitCost        Int           @default(0)
+  note            String?
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+  period          VendingPeriod @relation(fields: [periodId], references: [id], onDelete: Cascade)
+
+  @@unique([periodId, productName])
+}

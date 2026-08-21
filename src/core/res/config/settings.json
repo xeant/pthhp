@@ -1,0 +1,97 @@
+{
+    "navigation": {
+      "user": {
+        "name": "user",
+        "title": "회원 관리",
+        "route": "/admin/user/list",
+        "icon": "",
+        "subMenu": [
+          {
+              "title": "회원목록",
+              "name": "user",
+              "parent": "user",
+              "route": "/admin/user/list"
+          },
+          {
+              "title": "회원 그룹 설정",
+              "name": "groupList",
+              "icon": "",
+              "parent": "user",
+              "route": "/admin/user/groupList"
+          },
+          {
+              "title": "관리자 목록",
+              "name": "adminUserList",
+              "icon": "",
+              "parent": "user",
+              "route": "/admin/adminUserList"
+          }
+          ]
+      },
+      "posts": {
+        "name": "posts",
+        "title": "게시판 관리",
+        "route": "/admin/posts/list",
+        "icon": "",
+        "subMenu": [
+            {
+                "title": "게시판 목록",
+                "name": "postList",
+                "icon": "",
+                "parent": "user",
+                "route": "/admin/posts/list"
+            },
+            {
+                "title": "게시판 생성",
+                "name": "postCreate",
+                "icon": "",
+                "parent": "user",
+                "route": "/admin/posts/create"
+            },
+            {
+                "title": "신고 목록",
+                "name": "groupList",
+                "icon": "",
+                "parent": "user",
+                "route": "/admin/posts/reportList"
+            },
+            {
+                "title": "첨부파일",
+                "name": "groupList",
+                "icon": "",
+                "parent": "user",
+                "route": "/admin/posts/attachment"
+            }
+        ]
+      },
+      "settings": {
+        "name": "settings",
+        "title": "사이트 설정",
+        "route": "/admin/settings",
+        "icon": "",
+        "subMenu": [
+            {
+                "title": "기본 설정",
+                "name": "groupList",
+                "icon": "",
+                "parent": "user",
+                "route": "/admin/settings"
+            },
+            {
+                "title": "고급 설정",
+                "name": "groupList",
+                "icon": "",
+                "parent": "user",
+                "route": "/admin/settings/advanced"
+            }
+        ]
+      }
+      
+    },
+    "footer": {
+      "terms": {},
+      "privacy": {},
+      "about": {}
+    }
+  }
+  

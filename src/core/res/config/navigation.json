@@ -1,0 +1,53 @@
+{
+  "header": {
+    "features": {
+      "name": "features",
+      "title": "Features",
+      "route": "/features",
+      "parent": "features",
+      "icon": "",
+      "subMenu": [
+
+        ]
+    },
+
+    "labs": {
+      "name": "labs",
+      "title": "Labs",
+      "route": "/posts/labs",
+      "parent": "labs",
+      "icon": "",
+      "subMenu": [
+        
+        ]
+    },
+    "supports": {
+      "name": "supports",
+      "title": "Supports",
+      "route": "/posts/notice",
+      "icon": "",
+      "parent": "supports",
+      "subMenu": [
+        {
+            "title": "공지사항",
+            "name": "notice",
+            "icon": "",
+            "parent": "supports",
+            "route": "/posts/notice"
+        },
+        {
+          "title": "업데이트 내역",
+          "name": "changelog",
+          "icon": "",
+          "parent": "supports",
+          "route": "/posts/changelog"
+        }
+      ]
+    }
+  },
+  "footer": {
+    "terms": {},
+    "privacy": {},
+    "about": {}
+  }
+}

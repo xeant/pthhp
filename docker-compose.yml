@@ -1,0 +1,54 @@
+services:
+  app:
+    image: plextype_main-app:latest
+    container_name: plextype-app
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    env_file:
+      - .env.docker
+    ports:
+      - "80:3000"
+    volumes:
+      - plextype_storage:/app/storage
+    restart: unless-stopped
+
+  postgres:
+    image: postgres:16-alpine
+    container_name: plextype-postgres
+    environment:
+      POSTGRES_USER: plextype
+      POSTGRES_PASSWORD: plextype_password
+      POSTGRES_DB: plextype
+    ports:
+      - "5432:5432"
+    volumes:
+      - plextype_postgres:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U plextype -d plextype"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+    restart: unless-stopped
+
+  redis:
+    image: redis:7-alpine
+    container_name: plextype-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - plextype_redis:/data
+    restart: unless-stopped
+
+volumes:
+  plextype_postgres:
+    name: plextype_main_plextype_postgres
+    external: true
+  plextype_redis:
+    name: plextype_main_plextype_redis
+    external: true
+  plextype_storage:
+    name: plextype_main_plextype_storage
+    external: true

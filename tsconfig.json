@@ -1,0 +1,98 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "target": "es2015",
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
+    "allowJs": true,
+    "skipLibCheck": true,
+    "strict": false,
+    "forceConsistentCasingInFileNames": true,
+    "noEmit": true,
+    "incremental": true,
+    "esModuleInterop": true,
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "jsx": "react-jsx",
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ],
+    "paths": {
+      "@/*": [
+        "./src/*"
+      ],
+      "@core/*" : [
+        "./src/core/*"
+      ],
+      "@app/*" : [
+        "./src/app/*"
+      ],
+      "@modules/*": [
+        "./src/modules/*"
+      ],
+      "@extensions": [
+        "./src/extensions/index.tsx",
+        "./src/core/registry/defaultRegistry.tsx"
+      ],
+      "@extensions/styles/style.css": [
+        "./src/extensions/styles/style.css",
+        "./src/core/registry/empty.css"
+      ],
+      "@extensions/triggerRegistry": [
+        "./src/extensions/triggerRegistry.ts",
+        "./src/core/registry/defaultTriggerRegistry.ts"
+      ],
+      "@extensions/postCapabilities": [
+        "./src/extensions/postCapabilities.ts",
+        "./src/core/registry/defaultPostCapabilities.ts"
+      ],
+      "@extensions/*": [
+        "./src/extensions/*"
+      ],
+      "@extensions/trigger": [
+        "./src/extensions/trigger/index.ts"
+      ],
+      "@components/*": [
+        "./src/core/components/*"
+      ],
+      "@hooks/*": [
+        "./src/core/hooks/*"
+      ],
+      "@layouts/*" : [
+        "./src/layouts/*"
+      ],
+      "@providers/*": [
+        "./src/core/layouts/*"
+      ],
+      "@res/*": [
+        "./src/core/res/*"
+      ],
+      "@utils/*": [
+        "./src/core/utils/*"
+      ],
+      "@widgets/*": [
+        "./src/widgets/*"
+      ],
+    },
+    "strictNullChecks": true
+  },
+  "include": [
+    "src/core/types/*.ts",
+    "types/next-auth.d.ts",
+    "next-env.d.ts",
+    ".next/types/**/*.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    ".next/dev/types/**/*.ts"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
+}

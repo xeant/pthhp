@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="_레이어_2" data-name=" 레이어 2" xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 323.1 62.1">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: none;
+        stroke: #ecedef;
+        stroke-miterlimit: 10;
+      }
+    </style>
+  </defs>
+  <g id="_레이어_1-2" data-name=" 레이어 1-2">
+    <ellipse class="cls-1" cx="4.4" cy="57.6" rx="3.9" ry="4"/>
+    <ellipse class="cls-1" cx="318.7" cy="4.5" rx="3.9" ry="4"/>
+    <path class="cls-1" d="M7.1,54.5L48.8,12.9c6.1-6.1,14.3-9.5,22.8-9.4l243.2,1"/>
+  </g>
+</svg>
