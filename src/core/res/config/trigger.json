@@ -1,0 +1,22 @@
+{
+  "comment.saved": [
+    {
+      "handler": "sendNotification",
+      "map": {
+        "userId": "data.targetUserId",
+        "actorId": "data.userId",
+        "title": "💬 새로운 댓글 알림",
+        "content": "data.content",
+        "parentId": "data.parentId",
+        "subType": "data.notificationSubType",
+        "documentNotificationEnabled": "data.documentNotificationEnabled",
+        "linkUrl": "/posts/{{data.document.module.mid}}/{{data.document.slug}}",
+        "metadata": {
+          "appId": "gjworks",
+          "groupKey": "COMMUNITY",
+          "subType": "comment"
+        }
+      }
+    }
+  ]
+}

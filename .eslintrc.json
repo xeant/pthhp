@@ -1,0 +1,31 @@
+{
+  "rules": {
+    "no-restricted-imports": [
+      "error",
+      {
+        "patterns": [
+          {
+            "group": ["**/*.query", "**/*.query.ts"],
+            "message": "🚨 [아키텍처 위반] UI 컴포넌트나 Page에서는 DB Query에 직접 접근할 수 없습니다! Action이나 Service 로직을 거쳐주세요."
+          }
+        ]
+      }
+    ]
+  },
+  "overrides": [
+    {
+      // ✅ 수정: .action.ts(입구)와 .ts(서비스 로직) 파일 모두에서 query 접근 허용!
+      "files": ["**/*.action.ts", "**/*.ts"],
+      "rules": {
+        "no-restricted-imports": "off"
+      }
+    },
+    {
+      // ⚠️ 하지만 .tsx (UI/Page) 파일에서는 여전히 철저히 금지!
+      "files": ["**/*.tsx"],
+      "rules": {
+        "no-restricted-imports": "error"
+      }
+    }
+  ]
+}

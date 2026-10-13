@@ -1,0 +1,7 @@
+model WeeklyReportBackup {
+  id        Int      @id @default(autoincrement())
+  title     String   @db.VarChar(160)
+  payload   Json
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}

@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>주간업무보고서 작성</title>
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+  <main class="workspace">
+    <section class="editor" aria-label="보고서 입력">
+      <header class="topbar">
+        <div>
+          <h1>주간업무보고서</h1>
+          <p>시설부 작업내역과 사진을 PDF 양식으로 정리합니다.</p>
+        </div>
+        <div class="actions">
+          <button type="button" id="printBtn" class="ghost">인쇄</button>
+          <button type="button" id="pdfBtn" class="primary">PDF저장</button>
+          <button type="button" id="jpgBtn" class="primary">JPG저장</button>
+        </div>
+      </header>
+
+      <div class="panel compact">
+        <label>
+          부서명
+          <input id="department" value="시설부" autocomplete="off">
+        </label>
+        <label>
+          작업 시작일
+          <input id="startDate" type="date">
+        </label>
+        <label>
+          작업 종료일
+          <input id="endDate" type="date">
+        </label>
+        <label>
+          작성일
+          <input id="writtenDate" type="date">
+        </label>
+      </div>
+
+      <section class="panel">
+        <div class="section-head">
+          <h2>작업 내역</h2>
+        </div>
+        <div class="table-editor" id="workRows" aria-label="작업 내역 목록"></div>
+      </section>
+
+      <section class="panel">
+        <div class="section-head">
+          <h2>작업 사진</h2>
+          <button type="button" id="addPhotoDayBtn" class="small">날짜 추가</button>
+        </div>
+        <div id="photoDays" class="photo-days"></div>
+      </section>
+    </section>
+
+    <section class="preview-shell" aria-label="보고서 미리보기">
+      <div id="reportPreview" class="report"></div>
+    </section>
+  </main>
+
+  <script src="./app.js"></script>
+</body>
+</html>

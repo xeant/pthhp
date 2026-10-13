@@ -1,0 +1,375 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/core/utils/db/generated"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id            Int             @id @default(autoincrement())
+  slug          String          @unique
+  uuid          String          @unique @default(cuid())
+  accountId     String          @unique
+  email_address String          @unique
+  nickName      String          @unique
+  password      String
+  refreshToken  String?
+  createdAt     DateTime        @default(now())
+  updateAt      DateTime        @updatedAt
+  isAdmin       Boolean?
+  isManagers    Boolean?
+  status        String?         @db.VarChar(45)
+  Comment       Comment[]
+  documents     Document[]
+  profile       Profile?
+  preference    UserPreference?
+  userGroups    UserGroupUser[]
+  Attachment    Attachment[]
+  notifications Notification[]
+  pushTokens    PushToken[]
+  webPushSubscriptions WebPushSubscription[]
+
+  @@index([email_address], map: "idx_user_email")
+  @@index([isAdmin], map: "idx_user_isAdmin")
+}
+
+model Profile {
+  id           Int     @id @default(autoincrement())
+  phone        String  @unique
+  userId       Int     @unique
+  profileImage String?
+  status       String? @db.VarChar(45)
+  user         User    @relation(fields: [userId], references: [id])
+}
+
+model UserPreference {
+  id               Int      @id @default(autoincrement())
+  userId           Int      @unique
+  theme            String   @default("system") @db.VarChar(20)
+  notifyComments   Boolean  @default(true)
+  notifyReplies    Boolean  @default(true)
+  notifyAdmin      Boolean  @default(true)
+  reduceMotion     Boolean  @default(false)
+  fontScale         String   @default("normal") @db.VarChar(20)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+  user             User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId], map: "idx_user_preference_user")
+}
+
+model UserGroup {
+  id         Int             @id @default(autoincrement())
+  groupName  String          @unique
+  groupTitle String          @db.VarChar(45)
+  groupDesc  String?
+  createdAt  DateTime        @default(now())
+  updatedAt  DateTime        @updatedAt
+  users      UserGroupUser[]
+}
+
+model UserGroupUser {
+  id        Int       @id @default(autoincrement())
+  groupId   Int
+  userId    Int
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  group     UserGroup @relation(fields: [groupId], references: [id])
+  user      User      @relation(fields: [userId], references: [id])
+
+  @@unique([userId, groupId], name: "uniq_ugu_user_group")
+  @@index([userId], map: "idx_ugu_user")
+  @@index([groupId], map: "idx_ugu_group")
+}
+
+model Document {
+  id             Int         @id @default(autoincrement())
+  slug           String      @unique
+  uuid           String?     @unique @default(cuid())
+  categoryId     Int?
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
+  published      Boolean?    @default(false)
+  userId         Int?
+  authorName     String?     @db.VarChar(45)
+  authorPassword String?
+  title          String?     @db.VarChar(255)
+  content        String?
+  isNotice       Boolean?    @default(false)
+  isSecrets      Boolean?    @default(false)
+  readCount      Int?        @default(0)
+  commentCount   Int?        @default(0)
+  voteCount      Int?        @default(0)
+  moduleId       Int
+  moduleType     String
+  extraFieldData Json?       @default("{}")
+  thumbnail      String?     @db.Text
+  status         String?     @db.VarChar(45)
+  Comment        Comment[]
+  category       Category?   @relation("DocumentCategory", fields: [categoryId], references: [id])
+  user           User?       @relation(fields: [userId], references: [id])
+  module         Modules     @relation(fields: [moduleId], references: [id])
+  FieldGroup     FieldGroup? @relation(fields: [fieldGroupId], references: [id])
+  fieldGroupId   Int?
+
+  @@index([moduleType, moduleId], map: "idx_document_module")
+  @@index([categoryId], map: "idx_document_category")
+  @@index([userId], map: "idx_document_user")
+}
+
+model Category {
+  id         Int        @id @default(autoincrement())
+  slug       String     @unique
+  title      String     @db.VarChar(45)
+  desc       String?
+  color      String?    @db.VarChar(45)
+  order      Int        @default(0)
+  parentId   Int?
+  moduleId   Int?
+  moduleType String     @default("modules")
+  status     String?    @db.VarChar(45)
+  module     Modules?   @relation(fields: [moduleId], references: [id])
+  parent     Category?  @relation("CategoryChildren", fields: [parentId], references: [id])
+  children   Category[] @relation("CategoryChildren")
+  documents  Document[] @relation("DocumentCategory")
+
+  @@index([parentId], map: "idx_category_parent")
+  @@index([moduleType, moduleId], map: "idx_category_module")
+}
+
+model Modules {
+  id           Int         @id @default(autoincrement())
+  mid          String      @unique
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+  moduleName   String      @unique
+  moduleDesc   String?
+  grant        Json?       @db.Json
+  config       Json?       @db.Json
+  status       String?     @db.VarChar(45)
+  FieldGroup   FieldGroup? @relation(fields: [fieldGroupId], references: [id])
+  fieldGroupId Int?
+  documents    Document[]
+  Categorys    Category[]
+
+  @@index([status], map: "idx_modules_status")
+}
+
+model FieldGroup {
+  id        Int        @id @default(autoincrement())
+  name      String     @unique // 예: "basic_post_fields", "product_fields"
+  fields    Json // [{"name": "price", "type": "number", ...}]
+  status    String?    @db.VarChar(45)
+  documents Document[] // 이 설계를 사용하는 문서들
+  modules   Modules[] // 이 설계를 사용하는 게시판들
+}
+
+model Permission {
+  id          Int               @id @default(autoincrement())
+  action      String
+  subjectType PermissionSubject
+  subjectId   Int?
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+  moduleId    Int               @default(0)
+  moduleType  String            @default("unknown")
+  status      String?           @db.VarChar(45)
+
+  @@index([moduleType, moduleId], map: "idx_permission_module")
+  @@index([subjectType, subjectId], map: "idx_permission_subject")
+}
+
+model Comment {
+  id             Int       @id @default(autoincrement())
+  uuid           String    @unique @default(cuid())
+  slug           String    @unique
+  content        String
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+  documentId     Int
+  userId         Int?
+  authorName     String?   @db.VarChar(45)
+  authorPassword String?   @db.VarChar(255)
+  parentId       Int?
+  isDeleted      Boolean   @default(false)
+  isSecret       Boolean   @default(false)
+  voteCount      Int       @default(0)
+  depth          Int       @default(0)
+  status         String?   @db.VarChar(45)
+  document       Document  @relation(fields: [documentId], references: [id], onDelete: Cascade)
+  parent         Comment?  @relation("CommentChildren", fields: [parentId], references: [id])
+  children       Comment[] @relation("CommentChildren")
+  user           User?     @relation(fields: [userId], references: [id])
+
+  @@index([documentId], map: "idx_comment_document")
+  @@index([userId], map: "idx_comment_user")
+  @@index([parentId], map: "idx_comment_parent")
+}
+
+model DocumentViewLog {
+  id         Int      @id @default(autoincrement())
+  documentId Int
+  userId     Int?
+  ipAddress  String?
+  viewedAt   DateTime @default(now())
+
+  @@index([documentId, userId])
+  @@index([documentId, ipAddress])
+}
+
+model Attachment {
+  id           Int      @id @default(autoincrement())
+  uuid         String   @unique @default(cuid())
+  fileName     String
+  originalName String
+  mimeType     String
+  size         Int
+  path         String // 실제 저장 경로: /uploads/posts/... 등
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  status       String?  @db.VarChar(45)
+  userId       Int? // 업로더 User ID
+  uploadedBy   User?    @relation(fields: [userId], references: [id])
+
+  @@index([userId], map: "idx_attachment_user")
+}
+
+enum PermissionSubject {
+  guest
+  member
+  admin
+  group
+}
+
+model Notification {
+  id   Int    @id @default(autoincrement())
+  uuid String @unique @default(cuid())
+
+  // 👤 수신자 (기존 User 모델과 연결)
+  userId Int
+  user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  type     NotificationType @default(info)
+  title    String?          @db.VarChar(100) // 알림 제목 (예: "새로운 댓글", "시스템 보안")
+  content  String           @db.Text // 알림 본문 (Toast의 message)
+  imageUrl String?          @db.Text // 프로필 이미지, 앱 아이콘, 썸네일 경로
+
+  // 🔗 액션 (클릭 시 이동할 경로)
+  linkUrl String? @db.Text // 예: "/board/free/123" 또는 "https://..."
+
+  // 🛠️ 상태 및 메타데이터
+  isRead    Boolean   @default(false)
+  readAt    DateTime?
+  status    String?   @db.VarChar(45)
+  // 확장성을 위한 JSON (예: 어떤 게시물인지, 누가 보냈는지 상세 ID 저장)
+  metadata  Json?     @default("{}")
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  @@index([userId], map: "idx_notification_user")
+  @@index([isRead], map: "idx_notification_unread")
+  @@index([createdAt], map: "idx_notification_created")
+}
+
+model PushToken {
+  id         Int      @id @default(autoincrement())
+  userId     Int
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  token      String   @unique @db.Text
+  platform   String   @default("android") @db.VarChar(30)
+  deviceName String?  @db.VarChar(255)
+  isActive   Boolean  @default(true)
+  lastSeenAt DateTime @default(now())
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([userId], map: "idx_push_token_user")
+  @@index([isActive], map: "idx_push_token_active")
+}
+
+model WebPushSubscription {
+  id           Int      @id @default(autoincrement())
+  userId       Int
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  endpoint     String   @unique @db.Text
+  p256dh       String?  @db.Text
+  auth         String?  @db.Text
+  userAgent    String?  @db.Text
+  isActive     Boolean  @default(true)
+  failureCount Int      @default(0)
+  lastSeenAt   DateTime @default(now())
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@index([userId], map: "idx_web_push_subscription_user")
+  @@index([isActive], map: "idx_web_push_subscription_active")
+}
+
+model AppSetting {
+  id          Int      @id @default(autoincrement())
+  key         String   @unique
+  value       String?  @db.Text
+  group       String   @default("general") @db.VarChar(45)
+  label       String?  @db.VarChar(100)
+  description String?  @db.Text
+  isPublic    Boolean  @default(false)
+  status      String?  @db.VarChar(45)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([group], map: "idx_app_setting_group")
+  @@index([isPublic], map: "idx_app_setting_public")
+}
+
+model SiteNavigationGroup {
+  id          Int              @id @default(autoincrement())
+  key         String           @unique @db.VarChar(100)
+  title       String           @db.VarChar(120)
+  description String?          @db.Text
+  area        String           @default("custom") @db.VarChar(45)
+  order       Int              @default(0)
+  isActive    Boolean          @default(true)
+  status      String?          @db.VarChar(45)
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+  items       SiteNavigation[]
+
+  @@index([area], map: "idx_site_navigation_group_area")
+  @@index([isActive], map: "idx_site_navigation_group_active")
+}
+
+model SiteNavigation {
+  id         Int                   @id @default(autoincrement())
+  groupId    Int?
+  parentId   Int?
+  name       String                @db.VarChar(100)
+  title      String                @db.VarChar(120)
+  href       String                @db.Text
+  target     String?               @db.VarChar(20)
+  icon       String?               @db.VarChar(60)
+  order      Int                   @default(0)
+  depth      Int                   @default(0)
+  location   String                @default("header") @db.VarChar(45)
+  visibility String                @default("public") @db.VarChar(45)
+  isActive   Boolean               @default(true)
+  status     String?               @db.VarChar(45)
+  createdAt  DateTime              @default(now())
+  updatedAt  DateTime              @updatedAt
+  group      SiteNavigationGroup?  @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  parent     SiteNavigation?       @relation("SiteNavigationTree", fields: [parentId], references: [id], onDelete: Cascade)
+  children   SiteNavigation[]      @relation("SiteNavigationTree")
+
+  @@index([groupId], map: "idx_site_navigation_group")
+  @@index([location], map: "idx_site_navigation_location")
+  @@index([parentId], map: "idx_site_navigation_parent")
+  @@index([isActive], map: "idx_site_navigation_active")
+}
+
+enum NotificationType {
+  info
+  success
+  warning
+  error
+}
